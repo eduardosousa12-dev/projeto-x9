@@ -1,0 +1,1180 @@
+{
+  "name": "[Projetos] X9 - Resumidor de grupos CHATWOOT",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Preencher Infos",
+        "height": 313.46127626489005,
+        "width": 261.97838819336135
+      },
+      "id": "ab04fa30-e88f-449b-899e-bcde004e7ee3",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4307,
+        3303
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0da0569-3145-4c8a-812e-49079a7c3ccf",
+              "name": "nome_instancia_evolution",
+              "value": "=Resumidor de grupos",
+              "type": "string"
+            },
+            {
+              "id": "3c6d353d-7da8-4641-a522-0f4a4ece306f",
+              "name": "id_grupo",
+              "value": "={{ $json[\"id do grupo\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "61463720-072f-4227-b2b8-12e6981ac494",
+              "name": "mensagens_maxima",
+              "value": 50,
+              "type": "number"
+            },
+            {
+              "id": "5af64764-6139-4140-9176-ad3a1f9e7e8c",
+              "name": "nome do grupo",
+              "value": "={{ $json[\"Nome do grupo\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "fcd3c920-7c0f-41e3-a7d8-1fa87a17e6a9",
+              "name": "nome do gestor",
+              "value": "={{ $json[\"Gestor Responsável\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "d0866cde-9bd4-4b9b-b94a-2b9dee1adc6b",
+              "name": "api_acess_token",
+              "value": "coloque sua api aqui",
+              "type": "string"
+            },
+            {
+              "id": "010619e8-a70b-4c02-b7d7-8461b9c0ec3b",
+              "name": "id_da_conta_chatwoot",
+              "value": "coloque ID aqui",
+              "type": "string"
+            },
+            {
+              "id": "24cda966-7e2e-45cc-8b93-b23abe19974b",
+              "name": "id_grupo_que_recebe_relatório",
+              "value": "coloque ID do grupo aqui",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c9e49438-373f-460e-8178-206da05dac5a",
+      "name": "Map Infos Iniciais2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4224,
+        3456
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1r2jE8qP67k4Ws74aC1ftWbsz84gIA73oqlntx04qSqs",
+          "mode": "list",
+          "cachedResultName": "Grupos Projetos Rugido",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r2jE8qP67k4Ws74aC1ftWbsz84gIA73oqlntx04qSqs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r2jE8qP67k4Ws74aC1ftWbsz84gIA73oqlntx04qSqs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -4672,
+        3456
+      ],
+      "id": "375e4ce2-1b6f-4947-9118-379d807ad3c2",
+      "name": "Pega todos os grupos1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "U47q3d9BjtA5WT4r",
+          "name": "Google Sheets account (Eduardo)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4155c3e1-03b0-4f60-ad5a-9e4482911017",
+              "leftValue": "={{ $json[\"Está ativo?\"] }}",
+              "rightValue": "SIM",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4448,
+        3456
+      ],
+      "id": "1408dcdf-00c5-4273-b1c0-d278f6654c4d",
+      "name": "Está ativo?1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4ccc8600-2134-45aa-bf44-99f95dce21c5",
+              "leftValue": "={{ $item(\"0\").$node[\"Separa grupos que não tiveram mensagem hoje\"].json[\"tem_grupos_sem_atendimento\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2656,
+        3456
+      ],
+      "id": "b15edd47-2e82-4f56-a37a-b0cc949cbdec",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega os dados dos grupos cadastrados (ex: do nó 'Map Infos Iniciais2')\n// IMPORTANTE: Verifique se o nome 'Map Infos Iniciais2' está correto.\nconst gruposInfo = $('Map Infos Iniciais2').all();\n\n// Pega os dados de entrada com todas as mensagens (do nó \"Get Message1\")\nconst todosOsGruposDeMensagens = $input.all(); \n\nconst resultados = [];\n\n// Agora o 'gruposInfo.forEach' vai funcionar\ngruposInfo.forEach(grupoInfo => {\n  const grupoId = grupoInfo.json.id_grupo;\n  \n  // Encontra o conjunto de mensagens para o grupo atual\n  const grupoDeMensagens = todosOsGruposDeMensagens.find(\n    msg => msg.json.meta && msg.json.meta.contact && msg.json.meta.contact.identifier === grupoId\n  );\n  \n  let mensagensDoGrupo = [];\n  let totalMensagens = 0;\n  \n  // Se encontrou o grupo e ele tem mensagens no payload\n  if (grupoDeMensagens && grupoDeMensagens.json.payload && grupoDeMensagens.json.payload.length > 0) {\n    mensagensDoGrupo = grupoDeMensagens.json.payload;\n    totalMensagens = mensagensDoGrupo.length;\n  }\n  \n  // Adiciona o resultado, com ou sem mensagens\n  resultados.push({\n    json: {\n      id_grupo: grupoId,\n      nome_grupo: grupoInfo.json['nome do grupo'],\n      nome_do_gestor: grupoInfo.json['nome do gestor'],\n      url_evolution: grupoInfo.json.url_evolution,\n      nome_instancia: grupoInfo.json.nome_instancia_evolution,\n      token_apikey: grupoInfo.json.token_apikey,\n      total_mensagens: totalMensagens,\n      tem_mensagens: totalMensagens > 0,\n      mensagens: mensagensDoGrupo\n    }\n  });\n});\n\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3328,
+        3456
+      ],
+      "id": "02cfd817-ad74-466f-99b6-e0d0916b4adf",
+      "name": "Separa as mensagens por nome do grupo"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega os dados dos grupos (do nó Map Infos Iniciais2)\nconst gruposInfo = $('Map Infos Iniciais2').all();\n// Pega os dados que chegam do nó anterior (já processados pelo Código 1)\nconst dadosInput = $input.all();\n\n// Calcula timestamps do dia atual\nconst hoje = new Date();\nconst timestampInicioHoje = Math.floor(new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 0, 0, 0, 0).getTime() / 1000);\nconst timestampFimHoje = Math.floor(new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 23, 59, 59, 999).getTime() / 1000);\n\nconst resultados = [];\n\n// Para cada grupo cadastrado\ngruposInfo.forEach(grupoInfo => {\n  const grupoId = grupoInfo.json.id_grupo;\n  let totalMensagensHoje = 0;\n  \n  // Procura este grupo nos dados de entrada\n  const itemDoGrupo = dadosInput.find(item => item.json && item.json.id_grupo === grupoId);\n  \n  // Se encontrou o grupo e tem mensagens\n  if (itemDoGrupo && itemDoGrupo.json.mensagens && Array.isArray(itemDoGrupo.json.mensagens)) {\n      \n      // Conta mensagens de hoje usando o timestamp correto\n      totalMensagensHoje = itemDoGrupo.json.mensagens.filter(mensagem => {\n        // A MUDANÇA ESTÁ AQUI: usando 'created_at'\n        const timestamp = mensagem.created_at; \n        return timestamp >= timestampInicioHoje && timestamp <= timestampFimHoje;\n      }).length;\n  }\n  \n  // Adiciona o resultado SEM as mensagens\n  resultados.push({\n    json: {\n      id_grupo: grupoId,\n      nome_grupo: grupoInfo.json['nome do grupo'],\n      nome_do_gestor: grupoInfo.json['nome do gestor'],\n      url_evolution: grupoInfo.json.url_evolution,\n      nome_instancia: grupoInfo.json.nome_instancia_evolution,\n      token_apikey: grupoInfo.json.token_apikey,\n      data_filtro: hoje.toISOString().split('T')[0],\n      total_mensagens_hoje: totalMensagensHoje,\n      tem_mensagens_hoje: totalMensagensHoje > 0,\n      grupo_encontrado: !!itemDoGrupo // Converte para booleano\n    }\n  });\n});\n\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3104,
+        3456
+      ],
+      "id": "63fd1a5e-1bab-4423-89af-c4ad58495d19",
+      "name": "Verifica se o grupo teve mensagens hoje"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega todos os dados do nó anterior\nconst grupos = $input.all();\n\n// Função melhorada para remover emojis com verificação de null\nfunction removerEmojis(texto) {\n  // Verifica se o texto é null, undefined ou não é string\n  if (!texto || typeof texto !== 'string') {\n    return '';\n  }\n  \n  return texto\n    .replace(/[\\u{1F600}-\\u{1F64F}]|[\\u{1F300}-\\u{1F5FF}]|[\\u{1F680}-\\u{1F6FF}]|[\\u{1F1E0}-\\u{1F1FF}]|[\\u{2600}-\\u{26FF}]|[\\u{2700}-\\u{27BF}]|[\\u{1F900}-\\u{1F9FF}]|[\\u{1FA70}-\\u{1FAFF}]/gu, '')\n    .replace(/[\\u200D\\uFE0F]/g, '') // Remove modificadores de emoji\n    .replace(/🧑‍|️‍|‍️|🪚|🤤|️‍️|🧠|️🧔‍️|‍️|🧳|🤖|🥘|🥗|🦷|️🧰|🪛|🪳/g, '') // Remove emojis específicos que sobraram\n    .replace(/\\s+/g, ' ') // Remove espaços duplos\n    .trim();\n}\n\n// Agrupa os grupos por gestor\nconst gruposPorGestor = {};\ngrupos.forEach(grupo => {\n  const nomeGestor = (grupo.json.nome_do_gestor || 'Gestor não informado').trim(); // Remove espaços extras\n  \n  // Verifica se nome_grupo existe antes de processar\n  const nomeGrupoOriginal = grupo.json.nome_grupo || 'Grupo sem nome';\n  const nomeGrupoLimpo = removerEmojis(nomeGrupoOriginal);\n  \n  if (!gruposPorGestor[nomeGestor]) {\n    gruposPorGestor[nomeGestor] = [];\n  }\n  \n  gruposPorGestor[nomeGestor].push({\n    nome_grupo: nomeGrupoLimpo || 'Grupo sem nome',\n    total_mensagens_hoje: grupo.json.total_mensagens_hoje || 0,\n    tem_atendimento: (grupo.json.total_mensagens_hoje || 0) > 2,\n    id_grupo: grupo.json.id_grupo\n  });\n});\n\n// Verifica se há grupos sem atendimento\nconst totalGruposSemAtendimento = grupos.filter(grupo => (grupo.json.total_mensagens_hoje || 0) <= 2).length;\n\n// Se não há grupos sem atendimento\nif (totalGruposSemAtendimento === 0) {\n  return [{\n    json: {\n      tem_grupos_sem_atendimento: false,\n      total_grupos_sem_atendimento: 0,\n      mensagem: \"*RELATÓRIO DO X9👀:*\\n\\n✅ Todos os grupos tiveram atendimento hoje!\",\n      data: new Date().toISOString().split('T')[0]\n    }\n  }];\n}\n\n// Monta a mensagem agrupada por gestor\nlet mensagem = `*RELATÓRIO DO X9👀:*\\n\\n📊 RELATÓRIO DE ATENDIMENTO - ${new Date().toLocaleDateString('pt-BR')}\\n\\n`;\n\nObject.keys(gruposPorGestor).forEach(gestor => {\n  const gruposDoGestor = gruposPorGestor[gestor];\n  const totalGrupos = gruposDoGestor.length;\n  const gruposAtendidos = gruposDoGestor.filter(grupo => grupo.tem_atendimento);\n  const gruposSemAtendimento = gruposDoGestor.filter(grupo => !grupo.tem_atendimento);\n  const quantidadeAtendidos = gruposAtendidos.length;\n  \n  mensagem += `👤 ${gestor}: ${quantidadeAtendidos}/${totalGrupos}\\n`;\n  \n  // Primeiro mostra os atendidos\n  gruposAtendidos.forEach(grupo => {\n    mensagem += `   • ${grupo.nome_grupo}: ✅ Atendido\\n`;\n  });\n  \n  // Depois mostra os sem atendimento\n  gruposSemAtendimento.forEach(grupo => {\n    mensagem += `   • ${grupo.nome_grupo}: ❌ Sem atendimento\\n`;\n  });\n  \n  mensagem += '\\n';\n});\n\n// Retorna um único item com a mensagem consolidada\nreturn [{\n  json: {\n    tem_grupos_sem_atendimento: true,\n    total_grupos_sem_atendimento: totalGruposSemAtendimento,\n    mensagem: mensagem,\n    data: new Date().toISOString().split('T')[0],\n    grupos_por_gestor: gruposPorGestor\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2880,
+        3456
+      ],
+      "id": "55c42e33-83b5-4567-929a-5241105fb066",
+      "name": "Separa grupos que não tiveram mensagem hoje"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 17
+            }
+          ]
+        }
+      },
+      "id": "1add1473-52ff-4b7a-b1d9-5af7362a6565",
+      "name": "1x Dia as 17:0",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -5344,
+        3360
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -5344,
+        3552
+      ],
+      "id": "36414205-fbfa-4931-9378-003f5b38bdb2",
+      "name": "1x dia as 18:00"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega os dados do nó específico \"Separa grupos que não tiveram mensagem hoje\"\nconst dados = $('Separa grupos que não tiveram mensagem hoje').all()[0];\n\n// Verifica se tem a estrutura esperada\nif (!dados || !dados.json || !dados.json.grupos_por_gestor) {\n  console.log('Estrutura não encontrada. Dados recebidos:', dados);\n  return [{\n    json: {\n      tem_gestores_100_porcento: false,\n      total_gestores_100_porcento: 0,\n      mensagem: \"Estrutura de dados não encontrada\",\n      data: new Date().toISOString().split('T')[0]\n    }\n  }];\n}\n\nconst gruposPorGestor = dados.json.grupos_por_gestor;\nconsole.log('Grupos por gestor:', Object.keys(gruposPorGestor));\n\n// Filtra gestores que atenderam 100%\nconst gestores100Porcento = [];\n\nObject.keys(gruposPorGestor).forEach(gestor => {\n  // Pula \"Gestor não informado\"\n  if (gestor === 'Gestor não informado') {\n    return;\n  }\n  \n  const grupos = gruposPorGestor[gestor];\n  const totalGrupos = grupos.length;\n  const gruposAtendidos = grupos.filter(grupo => grupo.tem_atendimento === true).length;\n  const porcentagem = (gruposAtendidos / totalGrupos) * 100;\n  \n  console.log(`${gestor}: ${gruposAtendidos}/${totalGrupos} = ${porcentagem}%`);\n  \n  if (porcentagem === 100) {\n    gestores100Porcento.push({\n      nome: gestor,\n      total_grupos: totalGrupos,\n      grupos_atendidos: gruposAtendidos,\n      grupos: grupos.map(g => g.nome_grupo)\n    });\n  }\n});\n\nconsole.log('Gestores 100%:', gestores100Porcento);\n\n// Se não há gestores com 100%\nif (gestores100Porcento.length === 0) {\n  return [{\n    json: {\n      tem_gestores_100_porcento: false,\n      total_gestores_100_porcento: 0,\n      mensagem: null,\n      data: new Date().toISOString().split('T')[0]\n    }\n  }];\n}\n\n// Monta mensagem de parabéns\nlet mensagem = `🎉 *PARABÉNS GESTORES 100%* - ${new Date().toLocaleDateString('pt-BR')}\\n\\n`;\n\ngestores100Porcento.forEach((gestor, index) => {\n  mensagem += `🏆 *${gestor.nome}*\\n`;\n  mensagem += `   ✅ ${gestor.grupos_atendidos}/${gestor.total_grupos} grupos atendidos (100%)\\n\\n`;\n});\n\nmensagem += `👏 Excelente trabalho! Continuem assim!`;\n\n// Retorna resultado\nreturn [{\n  json: {\n    tem_gestores_100_porcento: true,\n    total_gestores_100_porcento: gestores100Porcento.length,\n    mensagem: mensagem,\n    data: new Date().toISOString().split('T')[0],\n    gestores_destaque: gestores100Porcento\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2208,
+        3360
+      ],
+      "id": "de920d31-024c-41b8-8f98-f45f7bfba156",
+      "name": "Vê gestores 100%"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dc1d4a06-fc18-4519-b86f-2677952ae5cc",
+              "leftValue": "={{ $item(\"0\").$node[\"Merge2\"].json[\"Hour\"].toNumber() }}",
+              "rightValue": 18,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "3c4a2a14-e8d9-4ab3-b1ee-2ab6e66c3924",
+              "leftValue": "={{ $item(\"0\").$node[\"Vê gestores 100%\"].json[\"tem_gestores_100_porcento\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1984,
+        3360
+      ],
+      "id": "f948eb8a-ad50-4683-a63e-f5575a4b355d",
+      "name": "Tem gestor 100%? E é depois de 18h?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        3456
+      ],
+      "id": "994b27fb-3bef-4f2d-ad5a-c6729bff573d",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -5120,
+        3456
+      ],
+      "id": "95768cad-dbaa-4697-953e-06e097e28130",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "070e6275-76cb-4fc8-b101-f0c1ac0409c5",
+              "leftValue": "={{ $item(\"0\").$node[\"Merge2\"].json[\"Day of week\"] }}",
+              "rightValue": "Saturday",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "a2b546c6-3890-4183-8328-2e2240d38ce1",
+              "leftValue": "={{ $item(\"0\").$node[\"Merge2\"].json[\"Day of week\"] }}",
+              "rightValue": "Sunday",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -4896,
+        3456
+      ],
+      "id": "bc96763f-d827-4433-ab61-aba61cccb197",
+      "name": "Sábado e Domingo?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega os dados do nó \"Vê gestores 100%\"\nconst dados = $('Vê gestores 100%').all()[0];\n\n// Verifica se tem dados\nif (!dados || !dados.json) {\n  return [{\n    json: {\n      erro: \"Nenhum dado encontrado do nó 'Vê gestores 100%'\",\n      data: new Date().toLocaleDateString('pt-BR')\n    }\n  }];\n}\n\n// Se não tem gestores 100%\nif (!dados.json.tem_gestores_100_porcento || !dados.json.gestores_destaque) {\n  return [{\n    json: {\n      info: \"Nenhum gestor atingiu 100% hoje\",\n      data: new Date().toLocaleDateString('pt-BR')\n    }\n  }];\n}\n\n// Cria um item para cada gestor\nconst resultados = [];\n\ndados.json.gestores_destaque.forEach(gestor => {\n  resultados.push({\n    json: {\n      data_atendimento: new Date().toLocaleDateString('pt-BR'),\n      nome_gestor: gestor.nome,\n      grupos_atendidos: gestor.grupos_atendidos,\n      total_grupos: gestor.total_grupos,\n      performance: \"100%\",\n      grupos: gestor.grupos\n    }\n  });\n});\n\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1536,
+        3264
+      ],
+      "id": "317a19b5-219b-4940-8fa2-ace43e1a3435",
+      "name": "Retorna Gestores 100%"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4",
+          "mode": "list",
+          "cachedResultName": "Gestores 100% Atendimento - RUGIDO ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Dia do atendimeto": "={{ $json[\"data_atendimento\"] }}",
+            "Nome do Gestor": "={{ $json[\"nome_gestor\"] }}",
+            "Quantidade de atendimentos": "={{ $json[\"grupos_atendidos\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Dia do atendimeto",
+              "displayName": "Dia do atendimeto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome do Gestor",
+              "displayName": "Nome do Gestor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantidade de atendimentos",
+              "displayName": "Quantidade de atendimentos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1312,
+        3264
+      ],
+      "id": "c1ec5626-100f-4c19-b064-1cc5e4717a01",
+      "name": "Sobe na planilha cada gestor",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "U47q3d9BjtA5WT4r",
+          "name": "Google Sheets account (Eduardo)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega os dados do nó 'Verifica se o grupo teve mensagens hoje'\nconst dados = $('Verifica se o grupo teve mensagens hoje').all();\n\nconsole.log('Total de itens:', dados.length);\nconsole.log('Estrutura do primeiro item:', dados[0] ? Object.keys(dados[0].json || {}) : 'Nenhum item');\n\n// Se há grupos sem atendimento, não processa\nconst temGruposSemAtendimento = dados.some(item => \n  item.json && item.json.total_mensagens_hoje <= 2\n);\n\nif (temGruposSemAtendimento) {\n  const totalSemAtendimento = dados.filter(item => \n    item.json && item.json.total_mensagens_hoje <= 2\n  ).length;\n  \n  return [{\n    json: {\n      info: \"Ainda há grupos sem atendimento, não é possível gerar relatório de sucesso\",\n      total_sem_atendimento: totalSemAtendimento,\n      data: new Date().toLocaleDateString('pt-BR')\n    }\n  }];\n}\n\n// Se todos tiveram atendimento, agrupa por gestor\nconst gruposPorGestor = {};\n\ndados.forEach(item => {\n  if (!item.json) return;\n  \n  const gestor = item.json.nome_do_gestor?.trim() || 'Gestor não informado';\n  \n  if (!gruposPorGestor[gestor]) {\n    gruposPorGestor[gestor] = [];\n  }\n  \n  gruposPorGestor[gestor].push({\n    nome_grupo: item.json.nome_grupo,\n    total_mensagens_hoje: item.json.total_mensagens_hoje,\n    tem_atendimento: item.json.total_mensagens_hoje > 2,\n    id_grupo: item.json.id_grupo\n  });\n});\n\nconst resultados = [];\n\n// Para cada gestor, cria um item separado\nObject.keys(gruposPorGestor).forEach(gestor => {\n  // Pula \"Gestor não informado\"\n  if (gestor === 'Gestor não informado') {\n    return;\n  }\n  \n  const grupos = gruposPorGestor[gestor];\n  const totalGrupos = grupos.length;\n  const gruposAtendidos = grupos.filter(grupo => grupo.tem_atendimento).length;\n  const nomesDosGrupos = grupos.map(g => g.nome_grupo);\n  \n  resultados.push({\n    json: {\n      data_atendimento: new Date().toLocaleDateString('pt-BR'),\n      nome_gestor: gestor,\n      grupos_atendidos: gruposAtendidos,\n      total_grupos: totalGrupos,\n      performance: \"100%\",\n      status: \"Todos os grupos atendidos\",\n      grupos: nomesDosGrupos\n    }\n  });\n});\n\nconsole.log('Gestores encontrados:', Object.keys(gruposPorGestor));\nconsole.log('Resultados gerados:', resultados.length);\n\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2208,
+        3552
+      ],
+      "id": "9bbf8536-0818-49d4-882c-0bec9c9a67d2",
+      "name": "Retorna Gestores 100%1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4",
+          "mode": "list",
+          "cachedResultName": "Gestores 100% Atendimento - RUGIDO ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Dia do atendimeto": "={{ $json[\"data_atendimento\"] }}",
+            "Nome do Gestor": "={{ $json[\"nome_gestor\"] }}",
+            "Quantidade de atendimentos": "={{ $json[\"grupos_atendidos\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Dia do atendimeto",
+              "displayName": "Dia do atendimeto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome do Gestor",
+              "displayName": "Nome do Gestor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantidade de atendimentos",
+              "displayName": "Quantidade de atendimentos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1984,
+        3552
+      ],
+      "id": "b6131019-f974-42eb-a696-5078bb0fd83b",
+      "name": "Sobe na planilha cada gestor1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "U47q3d9BjtA5WT4r",
+          "name": "Google Sheets account (Eduardo)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega os dados do nó 'Verifica se o grupo teve mensagens hoje'\nconst dados = $('Verifica se o grupo teve mensagens hoje').all();\n\nconsole.log('Total de itens:', dados.length);\n\n// Agrupa por gestor\nconst gruposPorGestor = {};\n\ndados.forEach(item => {\n  if (!item.json) return;\n  \n  const gestor = item.json.nome_do_gestor?.trim() || 'Gestor não informado';\n  \n  if (!gruposPorGestor[gestor]) {\n    gruposPorGestor[gestor] = [];\n  }\n  \n  gruposPorGestor[gestor].push({\n    nome_grupo: item.json.nome_grupo,\n    total_mensagens_hoje: item.json.total_mensagens_hoje,\n    tem_atendimento: item.json.total_mensagens_hoje > 2,\n    id_grupo: item.json.id_grupo\n  });\n});\n\nconst resultados = [];\n\n// Para cada gestor, verifica se atendeu 100%\nObject.keys(gruposPorGestor).forEach(gestor => {\n  // Pula \"Gestor não informado\"\n  if (gestor === 'Gestor não informado') {\n    return;\n  }\n  \n  const grupos = gruposPorGestor[gestor];\n  const totalGrupos = grupos.length;\n  const gruposAtendidos = grupos.filter(grupo => grupo.tem_atendimento).length;\n  const gruposNaoAtendidos = grupos.filter(grupo => !grupo.tem_atendimento);\n  const porcentagem = Math.round((gruposAtendidos / totalGrupos) * 100);\n  \n  // Só adiciona se NÃO atendeu 100%\n  if (gruposAtendidos < totalGrupos) {\n    resultados.push({\n      json: {\n        data_avaliacao: new Date().toLocaleDateString('pt-BR'),\n        nome_gestor: gestor,\n        grupos_atendidos: gruposAtendidos,\n        total_grupos: totalGrupos,\n        grupos_nao_atendidos: totalGrupos - gruposAtendidos,\n        performance: `${porcentagem}%`,\n        status: \"Atendimento incompleto\",\n        grupos_sem_atendimento: gruposNaoAtendidos.map(g => g.nome_grupo)\n      }\n    });\n  }\n});\n\nconsole.log('Gestores com atendimento incompleto:', resultados.length);\n\n// Se todos os gestores atenderam 100%\nif (resultados.length === 0) {\n  return [{\n    json: {\n      info: \"Todos os gestores atenderam 100% dos seus grupos\",\n      data_avaliacao: new Date().toLocaleDateString('pt-BR'),\n      status: \"Excelente performance geral\"\n    }\n  }];\n}\n\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1088,
+        3264
+      ],
+      "id": "906189fd-c982-4a7c-8147-e927fd511f64",
+      "name": "Retorna Gestores que não atenderam 100%"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4",
+          "mode": "list",
+          "cachedResultName": "Gestores  Atendimento - RUGIDO ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2093117978,
+          "mode": "list",
+          "cachedResultName": "Nao atenderam 100%",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit#gid=2093117978"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Dia do atendimeto": "={{ $json[\"data_avaliacao\"] }}",
+            "Nome do Gestor": "={{ $json[\"nome_gestor\"] }}",
+            "Quantidade de atendimentos": "={{ $json[\"grupos_atendidos\"] }}",
+            "Precisava ter feito": "={{ $json[\"total_grupos\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Dia do atendimeto",
+              "displayName": "Dia do atendimeto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome do Gestor",
+              "displayName": "Nome do Gestor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantidade de atendimentos",
+              "displayName": "Quantidade de atendimentos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Precisava ter feito",
+              "displayName": "Precisava ter feito",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -864,
+        3264
+      ],
+      "id": "c7727d25-f267-4d48-b046-e5c47aa132be",
+      "name": "Sobe Gestores que não atenderam Tudo",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "U47q3d9BjtA5WT4r",
+          "name": "Google Sheets account (Eduardo)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://chat.gruporugido.com/api/v1/accounts/2/contacts/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $node[\"Map Infos Iniciais2\"].json[\"id_grupo\"] }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "={{ $node[\"Map Infos Iniciais2\"].json[\"api_acess_token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4000,
+        3456
+      ],
+      "id": "f1899f9e-3735-4c43-bdc0-f3793d4abea2",
+      "name": "Procura contato pelo id do grupo"
+    },
+    {
+      "parameters": {
+        "url": "=https://chat.gruporugido.com/api/v1/accounts/2/contacts/{{ $json[\"payload\"][\"0\"][\"id\"] }}/conversations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "={{ $node[\"Map Infos Iniciais2\"].json[\"api_acess_token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3776,
+        3456
+      ],
+      "id": "16f9e384-be10-425b-b318-53859377253a",
+      "name": "Puxar conversations"
+    },
+    {
+      "parameters": {
+        "url": "=https://chat.gruporugido.com/api/v1/accounts/2/conversations/{{ $json[\"payload\"][\"0\"][\"id\"] }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "={{ $node[\"Map Infos Iniciais2\"].json[\"api_acess_token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3552,
+        3456
+      ],
+      "id": "b5fb95da-42b1-4f9e-a01c-df73a491808b",
+      "name": "Puxa mensagens"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.gruporugido.com/api/v1/accounts/{{ $node[\"Map Infos Iniciais2\"].json[\"id_da_conta_chatwoot\"] }}/conversations/{{ $node[\"Map Infos Iniciais2\"].json[\"id_grupo_que_recebe_relatório\"] }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "={{ $node[\"Map Infos Iniciais2\"].json[\"api_acess_token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "={{ $node[\"Separa grupos que não tiveram mensagem hoje\"].json[\"mensagem\"] }}"
+            },
+            {
+              "name": "message_type",
+              "value": "outgoing"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2432,
+        3360
+      ],
+      "id": "443cf38d-0312-4afd-945c-f585d4823ef4",
+      "name": "Enviar Resumo Grupo (Sem atendimento)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.gruporugido.com/api/v1/accounts/{{ $node[\"Map Infos Iniciais2\"].json[\"id_da_conta_chatwoot\"] }}/conversations/{{ $node[\"Map Infos Iniciais2\"].json[\"id_grupo_que_recebe_relatório\"] }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "={{ $node[\"Map Infos Iniciais2\"].json[\"api_acess_token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "=*BORAAAAAAAAA*  *É O DREAM TEAM PÔ* 🤑🤑🤑🤑🤑🤑🤑🤑  *PARABÉNS GALERA 100% HOJE GERAL, MICAIAS VAI PAGAR UM AÇAI PRA CADA AGORA*"
+            },
+            {
+              "name": "message_type",
+              "value": "outgoing"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2432,
+        3552
+      ],
+      "id": "9ffd8862-f722-480a-b366-a79ca6204114",
+      "name": "Enviar Resumo Grupo (Caso todos forem atendidos)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.gruporugido.com/api/v1/accounts/{{ $node[\"Map Infos Iniciais2\"].json[\"id_da_conta_chatwoot\"] }}/conversations/{{ $node[\"Map Infos Iniciais2\"].json[\"id_grupo_que_recebe_relatório\"] }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "={{ $node[\"Map Infos Iniciais2\"].json[\"api_acess_token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "={{ $item(\"0\").$node[\"Vê gestores 100%\"].json[\"mensagem\"] }}"
+            },
+            {
+              "name": "message_type",
+              "value": "outgoing"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1760,
+        3264
+      ],
+      "id": "41c3c6f5-8913-406b-a6d1-ce266f35cfd7",
+      "name": "Enviar Resumo Grupo (Sem atendimento)3"
+    }
+  ],
+  "pinData": {
+    "1x dia as 18:00": [
+      {
+        "json": {
+          "timestamp": "2025-09-10T18:00:10.007-03:00",
+          "Readable date": "September 10th 2025, 6:00:10 pm",
+          "Readable time": "6:00:10 pm",
+          "Day of week": "Wednesday",
+          "Year": "2025",
+          "Month": "September",
+          "Day of month": "10",
+          "Hour": "18",
+          "Minute": "00",
+          "Second": "10",
+          "Timezone": "America/Sao_Paulo (UTC-03:00)"
+        }
+      }
+    ],
+    "1x Dia as 17:0": [
+      {
+        "json": {
+          "timestamp": "2025-09-23T17:00:44.003-03:00",
+          "Readable date": "September 23rd 2025, 5:00:44 pm",
+          "Readable time": "5:00:44 pm",
+          "Day of week": "Tuesday",
+          "Year": "2025",
+          "Month": "September",
+          "Day of month": "23",
+          "Hour": "17",
+          "Minute": "00",
+          "Second": "44",
+          "Timezone": "America/Sao_Paulo (UTC-03:00)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Map Infos Iniciais2": {
+      "main": [
+        [
+          {
+            "node": "Procura contato pelo id do grupo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pega todos os grupos1": {
+      "main": [
+        [
+          {
+            "node": "Está ativo?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Está ativo?1": {
+      "main": [
+        [
+          {
+            "node": "Map Infos Iniciais2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Enviar Resumo Grupo (Sem atendimento)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar Resumo Grupo (Caso todos forem atendidos)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa as mensagens por nome do grupo": {
+      "main": [
+        [
+          {
+            "node": "Verifica se o grupo teve mensagens hoje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica se o grupo teve mensagens hoje": {
+      "main": [
+        [
+          {
+            "node": "Separa grupos que não tiveram mensagem hoje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa grupos que não tiveram mensagem hoje": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1x Dia as 17:0": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1x dia as 18:00": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Vê gestores 100%": {
+      "main": [
+        [
+          {
+            "node": "Tem gestor 100%? E é depois de 18h?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tem gestor 100%? E é depois de 18h?": {
+      "main": [
+        [
+          {
+            "node": "Enviar Resumo Grupo (Sem atendimento)3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Sábado e Domingo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sábado e Domingo?": {
+      "main": [
+        [
+          {
+            "node": "Pega todos os grupos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retorna Gestores 100%": {
+      "main": [
+        [
+          {
+            "node": "Sobe na planilha cada gestor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retorna Gestores 100%1": {
+      "main": [
+        [
+          {
+            "node": "Sobe na planilha cada gestor1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sobe na planilha cada gestor": {
+      "main": [
+        [
+          {
+            "node": "Retorna Gestores que não atenderam 100%",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retorna Gestores que não atenderam 100%": {
+      "main": [
+        [
+          {
+            "node": "Sobe Gestores que não atenderam Tudo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procura contato pelo id do grupo": {
+      "main": [
+        [
+          {
+            "node": "Puxar conversations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxar conversations": {
+      "main": [
+        [
+          {
+            "node": "Puxa mensagens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa mensagens": {
+      "main": [
+        [
+          {
+            "node": "Separa as mensagens por nome do grupo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Resumo Grupo (Sem atendimento)": {
+      "main": [
+        [
+          {
+            "node": "Vê gestores 100%",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Resumo Grupo (Caso todos forem atendidos)": {
+      "main": [
+        [
+          {
+            "node": "Retorna Gestores 100%1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Resumo Grupo (Sem atendimento)3": {
+      "main": [
+        [
+          {
+            "node": "Retorna Gestores 100%",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "72e0543f-ff3c-471d-9d00-a1ec0e422fd2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a6621628722aa5347c8b1013e0681aaac75a5c961fb103161daedf79fde4fd1e"
+  },
+  "id": "jA6NghnI7dFOuILX",
+  "tags": []
+}

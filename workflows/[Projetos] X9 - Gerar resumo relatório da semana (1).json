@@ -1,0 +1,314 @@
+{
+  "name": "[Projetos] X9 - Gerar resumo relatório da semana",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                5
+              ],
+              "triggerAtHour": 18,
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bb85bf15-dbe0-4e0f-b414-34b69411d5d3",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4",
+          "mode": "list",
+          "cachedResultName": "Gestores  Atendimento - RUGIDO ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Atendidos 100%",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a396c470-27bd-4a59-861d-fab03fdf2b91",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "U47q3d9BjtA5WT4r",
+          "name": "Google Sheets account (Eduardo)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4",
+          "mode": "list",
+          "cachedResultName": "Gestores  Atendimento - RUGIDO ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2093117978,
+          "mode": "list",
+          "cachedResultName": "Nao atenderam 100%",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pdjbDpebIKFhtEQnRCEdLMcwQ614S_0-9IVJ56XDqk4/edit#gid=2093117978"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        896,
+        0
+      ],
+      "id": "f450b699-21cc-4bb6-b151-e20364bb0f08",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "U47q3d9BjtA5WT4r",
+          "name": "Google Sheets account (Eduardo)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 1. SETUP ---\nconst hoje = new Date();\nconst dadosGestores = {};\nconst processedRowNumbers = new Set(); \n\n// --- 2. DEFINIÇÃO DO PERÍODO ---\nconst segundaFeira = new Date(hoje);\nconst diaDaSemana = hoje.getDay();\nconst diasParaSubtrair = diaDaSemana === 0 ? 6 : diaDaSemana - 1;\nsegundaFeira.setDate(hoje.getDate() - diasParaSubtrair);\nsegundaFeira.setHours(0, 0, 0, 0);\n\nconst sextaFeira = new Date(hoje);\nsextaFeira.setHours(23, 59, 59, 999);\n\nfunction parseDate(dateString) {\n  if (!dateString || typeof dateString !== 'string') return null;\n  const parts = dateString.split('/');\n  if (parts.length !== 3 || isNaN(parseInt(parts[0])) || isNaN(parseInt(parts[1])) || isNaN(parseInt(parts[2]))) return null;\n  return new Date(parts[2], parts[1] - 1, parts[0]);\n}\n\n// --- 3. PROCESSAMENTO - PLANILHA 'NÃO 100%' (Google Sheets1) ---\nconst itemsNao100 = $('Google Sheets1').all();\nfor (const item of itemsNao100) {\n  const rowNum = item.json.row_number;\n  if (processedRowNumbers.has(`nao100_${rowNum}`)) {\n    continue;\n  }\n  processedRowNumbers.add(`nao100_${rowNum}`);\n\n  const dataAtendimento = parseDate(item.json['Dia do atendimeto']);\n\n  if (!dataAtendimento || dataAtendimento < segundaFeira || dataAtendimento > sextaFeira) {\n    continue;\n  }\n  \n  const nomeGestor = item.json['Nome do Gestor'];\n  if (!nomeGestor) continue;\n\n  if (!dadosGestores[nomeGestor]) {\n    dadosGestores[nomeGestor] = { feitos: 0, devidos: 0 };\n  }\n\n  dadosGestores[nomeGestor].feitos += parseInt(item.json['Quantidade de atendimentos'], 10) || 0;\n  dadosGestores[nomeGestor].devidos += parseInt(item.json['Precisava ter feito'], 10) || 0;\n}\n\n// --- 4. PROCESSAMENTO - PLANILHA '100%' (Google Sheets) ---\nconst items100 = $('Google Sheets').all();\nfor (const item of items100) {\n  const rowNum = item.json.row_number;\n  if (processedRowNumbers.has(`100_${rowNum}`)) {\n    continue;\n  }\n  processedRowNumbers.add(`100_${rowNum}`);\n\n  const dataAtendimento = parseDate(item.json['Dia do atendimeto']);\n\n  if (!dataAtendimento || dataAtendimento < segundaFeira || dataAtendimento > sextaFeira) {\n    continue;\n  }\n\n  const nomeGestor = item.json['Nome do Gestor'];\n  if (!nomeGestor) continue;\n  \n  if (!dadosGestores[nomeGestor]) {\n    dadosGestores[nomeGestor] = { feitos: 0, devidos: 0 };\n  }\n\n  const atendimentosFeitos = parseInt(item.json['Quantidade de atendimentos'], 10) || 0;\n  dadosGestores[nomeGestor].feitos += atendimentosFeitos;\n  dadosGestores[nomeGestor].devidos += atendimentosFeitos;\n}\n\n// --- 5. CÁLCULO DO RANKING E FORMATAÇÃO ---\nlet ranking = Object.keys(dadosGestores).map(nome => {\n  const dados = dadosGestores[nome];\n  const percentual = dados.devidos > 0 ? (dados.feitos / dados.devidos) * 100 : 0;\n  return { nome, percentual, feitos: dados.feitos, devidos: dados.devidos };\n});\n\nranking.sort((a, b) => b.percentual - a.percentual);\n\nconst goldMedalists = ranking.filter(g => g.percentual === 100);\nconst otherRankings = ranking.filter(g => g.percentual < 100);\n\ngoldMedalists.sort((a, b) => a.nome.localeCompare(b.nome));\n\nconst dataInicioFormatada = segundaFeira.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });\nconst dataFimFormatada = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });\n\nlet mensagem = `🏆 *Ranking Semanal de Gestores* 🏆\\n*(Período: ${dataInicioFormatada} a ${dataFimFormatada})*\\n\\n`;\n\nif (ranking.length === 0) {\n  mensagem += \"Nenhum dado de atendimento encontrado para esta semana.\";\n} else {\n  // ## ALTERAÇÃO AQUI: Adicionado um \"\\n\" extra no final de cada linha ##\n  \n  // 1. Adiciona todos os medalhistas de ouro\n  goldMedalists.forEach(gestor => {\n    mensagem += `🥇 *${gestor.nome}* - ${gestor.percentual.toFixed(2)}% de conclusão (${gestor.feitos}/${gestor.devidos} atendimentos)\\n\\n`;\n  });\n\n  // 2. Adiciona o restante do ranking\n  const otherIcons = [\"🥈\", \"🥉\"];\n  otherRankings.forEach((gestor, index) => {\n    const icone = otherIcons[index] || '🔹';\n    mensagem += `${icone} *${gestor.nome}* - ${gestor.percentual.toFixed(2)}% de conclusão (${gestor.feitos}/${gestor.devidos} atendimentos)\\n\\n`;\n  });\n}\n\n// --- 6. RETORNO FINAL ---\nreturn [{\n  json: {\n    mensagemFinal: mensagem.trim() // .trim() para remover o último espaço em branco extra\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "ae3dc8de-1c7f-45e1-ad84-9ec799c02997",
+      "name": "Filtra os dados e cria ranking"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "236e96ff-dfee-4c74-a305-6171a318a4f1",
+      "name": "Wait",
+      "webhookId": "20f55d48-470a-492a-814d-a521ce0e92a9"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "e39b74ee-baeb-4841-a7d5-9c18c9597ba2",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.gruporugido.com/api/v1/accounts/{{ $node[\"Map Infos Iniciais2\"].json[\"id_da_conta_chatwoot\"] }}/conversations/{{ $node[\"Map Infos Iniciais2\"].json[\"id_grupo_que_recebe_relatório\"] }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "={{ $node[\"Map Infos Iniciais2\"].json[\"api_acess_token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "={{ $node[\"Filtra os dados e cria ranking\"].json[\"mensagemFinal\"] }}"
+            },
+            {
+              "name": "message_type",
+              "value": "outgoing"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        0
+      ],
+      "id": "1d075dc4-fdfb-4b57-9a16-a823fdd91bc8",
+      "name": "Enviar Resumo Grupo (Sem atendimento)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d0866cde-9bd4-4b9b-b94a-2b9dee1adc6b",
+              "name": "api_acess_token",
+              "value": "cole o id do seu acess token",
+              "type": "string"
+            },
+            {
+              "id": "010619e8-a70b-4c02-b7d7-8461b9c0ec3b",
+              "name": "id_da_conta_chatwoot",
+              "value": "cole o id do da sua conta",
+              "type": "string"
+            },
+            {
+              "id": "24cda966-7e2e-45cc-8b93-b23abe19974b",
+              "name": "id_grupo_que_recebe_relatório",
+              "value": "cole o id do seu grupo que vai receber a mensagem",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3860f36c-2fc4-423c-8d19-ae8240eecb63",
+      "name": "Map Infos Iniciais2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1360,
+        0
+      ]
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-08-01T18:05:26.023-03:00",
+          "Readable date": "August 1st 2025, 6:05:26 pm",
+          "Readable time": "6:05:26 pm",
+          "Day of week": "Friday",
+          "Year": "2025",
+          "Month": "August",
+          "Day of month": "01",
+          "Hour": "18",
+          "Minute": "05",
+          "Second": "26",
+          "Timezone": "America/Sao_Paulo (UTC-03:00)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Filtra os dados e cria ranking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra os dados e cria ranking": {
+      "main": [
+        [
+          {
+            "node": "Map Infos Iniciais2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Infos Iniciais2": {
+      "main": [
+        [
+          {
+            "node": "Enviar Resumo Grupo (Sem atendimento)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0cf77ce5-e5e9-427f-a676-d38703591d50",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a6621628722aa5347c8b1013e0681aaac75a5c961fb103161daedf79fde4fd1e"
+  },
+  "id": "GRxSD2fFBWmJy4XW",
+  "tags": []
+}
