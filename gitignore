@@ -1,0 +1,39 @@
+# Arquivos de configuração local
+.env
+.env.local
+.env.production
+*.local
+
+# Credenciais e tokens
+credentials.json
+tokens.txt
+secrets/
+
+# n8n
+.n8n/
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backups
+*.bak
+*.backup
+~*
+
+# Temporários
+tmp/
+temp/
+*.tmp
