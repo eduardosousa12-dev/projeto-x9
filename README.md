@@ -554,18 +554,11 @@ No n8n, ative os 3 workflows:
 
 ---
 
-## 📄 Licença
-
-Este projeto é de propriedade da **Rugido - Agência de Marketing Digital**.
-
-Uso interno apenas. Contato: [contato@gruporugido.com](mailto:contato@gruporugido.com)
-
----
-
-## 📞 Suporte
+## 📞 Contato
 
 **Time de Desenvolvimento**
-- Eduardo (eduardo@gruporugido.com)
+* **LinkedIn:** `https://www.linkedin.com/in/eduardo-sousa-dev12`
+* **E-mail:** `eduardodesousasilva12@gmail.com`
 
 **Documentação Completa**
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - Detalhes técnicos da arquitetura
@@ -576,9 +569,4 @@ Uso interno apenas. Contato: [contato@gruporugido.com](mailto:contato@gruporugid
 ---
 
 <div align="center">
-
-**Feito com ☕ pela equipe Rugido**
-
-[🏠 Rugido](https://gruporugido.com) • [📧 Contato](mailto:contato@gruporugido.com)
-
 </div>
